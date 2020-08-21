@@ -12,3 +12,16 @@ for data in reader:
     y = data["y"]
     print(x.shape)
     print(x.max())
+
+# TODO: load couple of images
+# write data iterator or reuse off-the shelf something
+# either pytorch dataloader or I want to try lightning actually
+
+# add model
+# add training loop - 
+# can also try lightning here
+# I actually really loved Chainer's trainer for its extensions architecture
+# and it is ported to torch, but not sure that will be good long-term investment :-\
+
+# train ^_^
+# add wandb logging
