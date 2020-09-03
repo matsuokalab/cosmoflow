@@ -3,6 +3,7 @@ import pytorch_lightning as pl
 import tfrecord
 import torch
 import torch.nn.functional as F
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from torch.utils.data import DataLoader, TensorDataset, random_split
 
 from model import build_model
@@ -62,7 +63,14 @@ class Cosmoflow(pl.LightningModule):
 train, val = random_split(dataset, [2, 2])
 
 model = Cosmoflow()
-trainer = pl.Trainer(gpus=4, max_epochs=50)
+early_stop_callback = EarlyStopping(
+    monitor="val_loss",
+    min_delta=0.0001,
+    patience=10,
+    verbose=False,
+    mode="min",
+)
+trainer = pl.Trainer(gpus=4, max_epochs=50, early_stop_callback=early_stop_callback)
 trainer.fit(model, DataLoader(train), DataLoader(val))
 
 # TODO: load more data
