@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import pytorch_lightning as pl
 import tfrecord
@@ -7,23 +8,28 @@ from torch.utils.data import DataLoader, TensorDataset, random_split
 
 from model import build_model
 
-path = "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small/train/univ_ics_2019-03_a10000668_000.tfrecord"
+path_data = "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small/train"
+# "univ_ics_2019-03_a10000668_000.tfrecord"
+# TODO: this is a bit ugly, but I expect to find some torch-y out of the box method later
+tensor_x = []
+tensor_y = []
 
-reader = tfrecord.reader.tfrecord_loader(data_path=path, index_path=None)
-
-for data in reader:
-    print(data)
+for name_file in os.listdir(path_data)[:12]:
+    path_file = os.path.join(path_data, name_file)
+    reader = tfrecord.reader.tfrecord_loader(data_path=path_file, index_path=None)
+    data = next(reader)  # we expect only one record in a file
     x = data["x"].astype(np.float32).reshape(8, 128, 128, 128) / 255 - 0.5
-    x = np.array([x] * 4)
     y = data["y"].astype(np.float32)
-    y = np.array([y] * 4)
-    print("in shape:", x.shape)
-    print("in max:", x.max())
-    print("y", y)
-    ####
+    x = torch.from_numpy(x)
+    y = torch.from_numpy(y)
+    tensor_x.append(x)
+    tensor_y.append(y)
+    # print("in shape:", x.shape)
+    # print("in max:", x.max())
+    # print("y", y)
 
-tensor_x = torch.from_numpy(x)
-tensor_y = torch.from_numpy(y)
+tensor_x = torch.stack(tensor_x)
+tensor_y = torch.stack(tensor_y)
 dataset = TensorDataset(tensor_x, tensor_y)  # create your datset
 dataloader = DataLoader(dataset)  # create your dataloader
 
@@ -59,10 +65,11 @@ class Cosmoflow(pl.LightningModule):
         return torch.optim.Adam(self.net.parameters(), lr=0.002)
 
 
-train, val = random_split(dataset, [2, 2])
+train, val = random_split(dataset, [8, 4])
 
 model = Cosmoflow()
-trainer = pl.Trainer(gpus=4, max_epochs=50)
+# trainer = pl.Trainer(gpus=4, max_epochs=50)
+trainer = pl.Trainer(max_epochs = 50)
 trainer.fit(model, DataLoader(train), DataLoader(val))
 
 # TODO: load more data
