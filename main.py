@@ -13,30 +13,32 @@ from model import build_model
 path_data = (
     "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small/validation"
 )
-# "univ_ics_2019-03_a10000668_000.tfrecord"
-# TODO: this is a bit ugly, but I expect to find some torch-y out of the box method later
-tensor_x = []
-tensor_y = []
+def load_ds_from_dir(path):
+    # TODO: this is a bit ugly, but I expect to find some torch-y out of the box method later
+    tensor_x = []
+    tensor_y = []
 
-for name_file in os.listdir(path_data)[:12]:
-    path_file = os.path.join(path_data, name_file)
-    reader = tfrecord.reader.tfrecord_loader(data_path=path_file, index_path=None)
-    data = next(reader)  # we expect only one record in a file
-    x = data["x"].astype(np.float32).reshape(8, 128, 128, 128) / 255 - 0.5
-    y = data["y"].astype(np.float32)
-    x = torch.from_numpy(x)
-    y = torch.from_numpy(y)
-    tensor_x.append(x)
-    tensor_y.append(y)
-    # print("in shape:", x.shape)
-    # print("in max:", x.max())
-    # print("y", y)
+    for name_file in os.listdir(path_data)[:12]:
+        path_file = os.path.join(path_data, name_file)
+        reader = tfrecord.reader.tfrecord_loader(data_path=path_file, index_path=None)
+        data = next(reader)  # we expect only one record in a file
+        x = data["x"].astype(np.float32).reshape(8, 128, 128, 128) / 255 - 0.5
+        y = data["y"].astype(np.float32)
+        x = torch.from_numpy(x)
+        y = torch.from_numpy(y)
+        tensor_x.append(x)
+        tensor_y.append(y)
+        # print("in shape:", x.shape)
+        # print("in max:", x.max())
+        # print("y", y)
 
-tensor_x = torch.stack(tensor_x)
-tensor_y = torch.stack(tensor_y)
-dataset = TensorDataset(tensor_x, tensor_y)  # create your datset
+    tensor_x = torch.stack(tensor_x)
+    tensor_y = torch.stack(tensor_y)
+    dataset = TensorDataset(tensor_x, tensor_y)  
+    return dataset
 # dataloader = DataLoader(dataset)  # create your dataloader
 
+dataset = load_ds_from_dir(path_data)
 # write data iterator or reuse off-the shelf something
 # either pytorch dataloader or I want to try lightning actually
 
