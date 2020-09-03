@@ -24,8 +24,8 @@ for data in reader:
 
 tensor_x = torch.from_numpy(x)
 tensor_y = torch.from_numpy(y)
-my_dataset = TensorDataset(tensor_x, tensor_y)  # create your datset
-my_dataloader = DataLoader(my_dataset)  # create your dataloader
+dataset = TensorDataset(tensor_x, tensor_y)  # create your datset
+dataloader = DataLoader(dataset)  # create your dataloader
 
 # write data iterator or reuse off-the shelf something
 # either pytorch dataloader or I want to try lightning actually
