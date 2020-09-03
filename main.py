@@ -27,9 +27,12 @@ class LitClassifier(pl.LightningModule):
     def __init__(self):
         self.net = build_model((128, 128, 128, 8), 4, 0)
 
+    def forward(self, x):
+        return self.net(x)
+
     def training_step(self, batch, batch_idx):
         x, y = batch
-        y_hat = self.net(x)
+        y_hat = self(x)
         loss = F.cross_entropy(y_hat, y)
         result = pl.TrainResult(loss)
         result.log("train_loss", loss, on_epoch=True)
