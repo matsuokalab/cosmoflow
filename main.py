@@ -65,6 +65,8 @@ model = Cosmoflow()
 trainer = pl.Trainer()
 trainer.fit(model, DataLoader(train), DataLoader(val))
 
+# TODO: load more data
+# TODO: proper test/val split
 # TODO: stop trigger on val loss stop decrease
 # TODO: explicitly set batch size
 # TODO: set 4 gpus
