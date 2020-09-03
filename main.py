@@ -6,20 +6,20 @@ import tfrecord
 import torch
 import torch.nn.functional as F
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
-from torch.utils.data import DataLoader, TensorDataset, random_split
+from torch.utils.data import DataLoader, TensorDataset
 
 from model import build_model
 
-path_data = (
-    "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small/validation"
-)
+path_data = "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small"
+
+
 def load_ds_from_dir(path):
     # TODO: this is a bit ugly, but I expect to find some torch-y out of the box method later
     tensor_x = []
     tensor_y = []
 
-    for name_file in os.listdir(path_data)[:12]:
-        path_file = os.path.join(path_data, name_file)
+    for name_file in os.listdir(path)[:12]:
+        path_file = os.path.join(path, name_file)
         reader = tfrecord.reader.tfrecord_loader(data_path=path_file, index_path=None)
         data = next(reader)  # we expect only one record in a file
         x = data["x"].astype(np.float32).reshape(8, 128, 128, 128) / 255 - 0.5
@@ -34,11 +34,13 @@ def load_ds_from_dir(path):
 
     tensor_x = torch.stack(tensor_x)
     tensor_y = torch.stack(tensor_y)
-    dataset = TensorDataset(tensor_x, tensor_y)  
+    dataset = TensorDataset(tensor_x, tensor_y)
     return dataset
 # dataloader = DataLoader(dataset)  # create your dataloader
 
-dataset = load_ds_from_dir(path_data)
+
+train = load_ds_from_dir(os.path.join(path_data, "train"))
+val = load_ds_from_dir(os.path.join(path_data, "validation"))
 # write data iterator or reuse off-the shelf something
 # either pytorch dataloader or I want to try lightning actually
 
@@ -71,7 +73,7 @@ class Cosmoflow(pl.LightningModule):
         return torch.optim.Adam(self.net.parameters(), lr=0.002)
 
 
-train, val = random_split(dataset, [8, 4])
+# train, val = random_split(dataset, [8, 4])
 
 model = Cosmoflow()
 early_stop_callback = EarlyStopping(
