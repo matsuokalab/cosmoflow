@@ -66,7 +66,7 @@ class Cosmoflow(pl.LightningModule):
         return result
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.net.parameters(), lr=0.002)
+        return torch.optim.Adam(self.parameters(), lr=0.002)
 
 
 train, val = random_split(dataset, [8, 4])
