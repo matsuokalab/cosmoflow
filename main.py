@@ -65,13 +65,7 @@ model = Cosmoflow()
 trainer = pl.Trainer()
 trainer.fit(model, DataLoader(train), DataLoader(val))
 
-# extend to work with lightning
-
-
-# add training loop -
-# can also try lightning here
-# I actually really loved Chainer's trainer for its extensions architecture
-# and it is ported to torch, but not sure that will be good long-term investment :-\
-
-# train ^_^
-# add wandb logging
+# TODO: stop trigger on val loss stop decrease
+# TODO: explicitly set batch size
+# TODO: set 4 gpus
+# TODO: add wandb logging
