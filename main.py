@@ -77,8 +77,6 @@ class Cosmoflow(pl.LightningModule):
         return torch.optim.Adam(self.parameters(), lr=0.002)
 
 
-# train, val = random_split(dataset, [8, 4])
-
 model = Cosmoflow()
 early_stop_callback = EarlyStopping(
     monitor="val_loss",
