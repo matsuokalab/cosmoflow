@@ -33,6 +33,7 @@ dataloader = DataLoader(dataset)  # create your dataloader
 # @todo(vatai): PROPER NAME
 class LitClassifier(pl.LightningModule):
     def __init__(self):
+        super().__init__()
         self.net = build_model((128, 128, 128, 8), 4, 0)
 
     def forward(self, x):
