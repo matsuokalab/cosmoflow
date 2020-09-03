@@ -62,7 +62,7 @@ class Cosmoflow(pl.LightningModule):
 train, val = random_split(dataset, [2, 2])
 
 model = Cosmoflow()
-trainer = pl.Trainer()
+trainer = pl.Trainer(gpus=4, max_epochs=50)
 trainer.fit(model, DataLoader(train), DataLoader(val))
 
 # TODO: load more data
