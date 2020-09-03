@@ -1,6 +1,8 @@
 import numpy as np
 import torch
 import tfrecord
+from model import build_model
+
 
 path = "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small/train/univ_ics_2019-03_a10000668_000.tfrecord"
 
@@ -15,16 +17,31 @@ for data in reader:
     print("in shape:", x.shape)
     print("in max:", x.max())
 
+x = x[np.newaxis, :].astype(np.float32  )
+x = torch.from_numpy(x) 
+
 # write data iterator or reuse off-the shelf something
 # either pytorch dataloader or I want to try lightning actually
 
-from model import build_model
+
+def training_step(self, batch, batch_idx):
+    x, y = batch
+    y_hat = self(x)
+    loss = F.cross_entropy(y_hat, y)
+    result = pl.TrainResult(loss)
+    result.log('train_loss', loss, on_epoch=True)
+    return result
 
 net = build_model((128, 128, 128, 8), 4, 0)
-x = x[np.newaxis, :].astype(np.float32  )
-x = torch.from_numpy(x) 
+net.training_step = training_step
+
+
+# extend to work with lightning
+
 result = net(x)
 print(result)
+
+
 # add training loop - 
 # can also try lightning here
 # I actually really loved Chainer's trainer for its extensions architecture
