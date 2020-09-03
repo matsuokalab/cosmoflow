@@ -3,7 +3,7 @@ import pytorch_lightning as pl
 import tfrecord
 import torch
 import torch.nn.functional as F
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import DataLoader, TensorDataset, random_split
 
 from model import build_model
 
@@ -30,7 +30,7 @@ my_dataloader = DataLoader(my_dataset)  # create your dataloader
 # write data iterator or reuse off-the shelf something
 # either pytorch dataloader or I want to try lightning actually
 
-
+# @todo(vatai): PROPER NAME
 class LitClassifier(pl.LightningModule):
     def __init__(self):
         self.net = build_model((128, 128, 128, 8), 4, 0)
@@ -58,14 +58,13 @@ class LitClassifier(pl.LightningModule):
         return torch.optim.Adam(self.net.parameters(), lr=0.02)
 
 
-net = build_model((128, 128, 128, 8), 4, 0)
-net.training_step = training_step
+train, val = random_split(dataset, [2, 2])
 
+model = LitClassifier()
+trainer = pl.Trainer()
+trainer.fit(model, DataLoader(train), DataLoader(val))
 
 # extend to work with lightning
-
-result = net(x)
-print(result)
 
 
 # add training loop -
