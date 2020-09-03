@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader, TensorDataset, random_split
 from model import build_model
 
 path_data = (
-    "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small/train"
+    "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small/validation"
 )
 # "univ_ics_2019-03_a10000668_000.tfrecord"
 # TODO: this is a bit ugly, but I expect to find some torch-y out of the box method later
@@ -35,7 +35,7 @@ for name_file in os.listdir(path_data)[:12]:
 tensor_x = torch.stack(tensor_x)
 tensor_y = torch.stack(tensor_y)
 dataset = TensorDataset(tensor_x, tensor_y)  # create your datset
-dataloader = DataLoader(dataset)  # create your dataloader
+# dataloader = DataLoader(dataset)  # create your dataloader
 
 # write data iterator or reuse off-the shelf something
 # either pytorch dataloader or I want to try lightning actually
