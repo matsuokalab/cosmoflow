@@ -7,17 +7,6 @@ from torch.utils.data import DataLoader, TensorDataset
 
 from model import build_model
 
-my_x = [
-    np.array([[1.0, 2], [3, 4]]),
-    np.array([[5.0, 6], [7, 8]]),
-]  # a list of numpy arrays
-my_y = [np.array([4.0]), np.array([2.0])]  # another list of numpy arrays (targets)
-
-tensor_x = torch.Tensor(my_x)  # transform to torch tensor
-tensor_y = torch.Tensor(my_y)
-
-my_dataloader = DataLoader(my_dataset)  # create your dataloader
-
 path = "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small/train/univ_ics_2019-03_a10000668_000.tfrecord"
 
 reader = tfrecord.reader.tfrecord_loader(data_path=path, index_path=None)
@@ -36,6 +25,7 @@ for data in reader:
 tensor_x = torch.from_numpy(x)
 tensor_y = torch.from_numpy(y)
 my_dataset = TensorDataset(tensor_x, tensor_y)  # create your datset
+my_dataloader = DataLoader(my_dataset)  # create your dataloader
 
 # write data iterator or reuse off-the shelf something
 # either pytorch dataloader or I want to try lightning actually
