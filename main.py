@@ -69,5 +69,4 @@ trainer.fit(model, DataLoader(train), DataLoader(val))
 # TODO: proper test/val split
 # TODO: stop trigger on val loss stop decrease
 # TODO: explicitly set batch size
-# TODO: set 4 gpus
 # TODO: add wandb logging
