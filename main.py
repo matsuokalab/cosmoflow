@@ -45,6 +45,7 @@ class Cosmoflow(pl.LightningModule):
     def __init__(self):
         super().__init__()
         self.net = build_model((128, 128, 128, 8), 4, 0)
+        self.example_input_array = torch.zeros((1, 8, 128, 128, 128))
 
     def forward(self, x):
         return self.net(x)
