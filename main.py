@@ -30,8 +30,8 @@ dataloader = DataLoader(dataset)  # create your dataloader
 # write data iterator or reuse off-the shelf something
 # either pytorch dataloader or I want to try lightning actually
 
-# @todo(vatai): PROPER NAME
-class LitClassifier(pl.LightningModule):
+
+class Cosmoflow(pl.LightningModule):
     def __init__(self):
         super().__init__()
         self.net = build_model((128, 128, 128, 8), 4, 0)
@@ -61,7 +61,7 @@ class LitClassifier(pl.LightningModule):
 
 train, val = random_split(dataset, [2, 2])
 
-model = LitClassifier()
+model = Cosmoflow()
 trainer = pl.Trainer()
 trainer.fit(model, DataLoader(train), DataLoader(val))
 
