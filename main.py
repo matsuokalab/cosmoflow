@@ -7,7 +7,7 @@ import torch
 import torch.nn.functional as F
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from torch.utils.data import DataLoader, TensorDataset
-
+from pytorch_lightning.loggers import WandbLogger
 from model import build_model
 
 path_data = "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small"
@@ -83,10 +83,13 @@ early_stop_callback = EarlyStopping(
     verbose=True,
     mode="min",
 )
+
+wandb_logger = WandbLogger(project="cosmoflow")
 trainer = pl.Trainer(gpus=-1,
                      max_epochs=50,
                      distributed_backend='ddp',
-                     early_stop_callback=early_stop_callback)
+                     early_stop_callback=early_stop_callback,
+                     logger=wandb_logger)
 trainer.fit(model, DataLoader(train), DataLoader(val))
 
 # TODO: load more data
