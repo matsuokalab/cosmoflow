@@ -54,7 +54,7 @@ class Cosmoflow(pl.LightningModule):
         y_hat = self(x)
         loss = F.mse_loss(y_hat, y)
         result = pl.TrainResult(loss)
-        result.log("train_loss", loss, on_epoch=True)
+        result.log("train_loss", loss, on_epoch=True, sync_dist=True)
         return result
 
     def validation_step(self, batch, batch_idx):
@@ -62,7 +62,7 @@ class Cosmoflow(pl.LightningModule):
         y_hat = self(x)
         loss = F.l1_loss(y_hat, y)
         result = pl.EvalResult(checkpoint_on=loss)
-        result.log("val_loss", loss)
+        result.log("val_loss", loss, sync_dist=True)
         return result
 
     def configure_optimizers(self):
