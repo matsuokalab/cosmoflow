@@ -69,7 +69,7 @@ class Cosmoflow(pl.LightningModule):
         x, y = batch
         y_hat = self(x)
         loss = F.l1_loss(y_hat, y)
-        result = pl.EvalResult(checkpoint_on=loss)
+        result = pl.EvalResult(early_stop_on=loss, checkpoint_on=loss)
         result.log("val_loss", loss, sync_dist=True)
         return result
 
@@ -79,7 +79,6 @@ class Cosmoflow(pl.LightningModule):
 
 model = Cosmoflow()
 early_stop_callback = EarlyStopping(
-    monitor="val_checkpoint_on",
     min_delta=0.1,
     patience=1,
     verbose=True,
