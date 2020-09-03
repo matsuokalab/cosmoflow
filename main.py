@@ -6,8 +6,9 @@ import tfrecord
 import torch
 import torch.nn.functional as F
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
-from torch.utils.data import DataLoader, TensorDataset
 from pytorch_lightning.loggers import WandbLogger
+from torch.utils.data import DataLoader, TensorDataset
+
 from model import build_model
 
 path_data = "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small"
@@ -36,6 +37,8 @@ def load_ds_from_dir(path):
     tensor_y = torch.stack(tensor_y)
     dataset = TensorDataset(tensor_x, tensor_y)
     return dataset
+
+
 # dataloader = DataLoader(dataset)  # create your dataloader
 
 
@@ -49,6 +52,7 @@ class Cosmoflow(pl.LightningModule):
     def __init__(self):
         super().__init__()
         self.net = build_model((128, 128, 128, 8), 4, 0)
+        self.example_input_array = torch.zeros((1, 8, 128, 128, 128))
 
     def forward(self, x):
         return self.net(x)
@@ -58,7 +62,7 @@ class Cosmoflow(pl.LightningModule):
         y_hat = self(x)
         loss = F.mse_loss(y_hat, y)
         result = pl.TrainResult(loss)
-        result.log("train_loss", loss, on_epoch=True)
+        result.log("train_loss", loss, on_epoch=True, sync_dist=True)
         return result
 
     def validation_step(self, batch, batch_idx):
@@ -66,11 +70,11 @@ class Cosmoflow(pl.LightningModule):
         y_hat = self(x)
         loss = F.l1_loss(y_hat, y)
         result = pl.EvalResult(checkpoint_on=loss)
-        result.log("val_loss", loss)
+        result.log("val_loss", loss, sync_dist=True)
         return result
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.net.parameters(), lr=0.002)
+        return torch.optim.Adam(self.parameters(), lr=0.002)
 
 
 # train, val = random_split(dataset, [8, 4])
@@ -83,13 +87,14 @@ early_stop_callback = EarlyStopping(
     verbose=True,
     mode="min",
 )
-
 wandb_logger = WandbLogger(project="cosmoflow")
-trainer = pl.Trainer(gpus=-1,
-                     max_epochs=50,
-                     distributed_backend='ddp',
-                     early_stop_callback=early_stop_callback,
-                     logger=wandb_logger)
+trainer = pl.Trainer(
+    gpus=-1,
+    max_epochs=50,
+    distributed_backend="ddp",
+    early_stop_callback=early_stop_callback,
+    logger=wandb_logger,
+)
 trainer.fit(model, DataLoader(train), DataLoader(val))
 
 # TODO: load more data
