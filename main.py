@@ -79,7 +79,7 @@ early_stop_callback = EarlyStopping(
     verbose=False,
     mode="min",
 )
-trainer = pl.Trainer(max_epochs=50, early_stop_callback=early_stop_callback)
+trainer = pl.Trainer(gpus=1, max_epochs=50, early_stop_callback=early_stop_callback)
 trainer.fit(model, DataLoader(train), DataLoader(val))
 
 # TODO: load more data
