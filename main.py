@@ -74,12 +74,15 @@ train, val = random_split(dataset, [8, 4])
 model = Cosmoflow()
 early_stop_callback = EarlyStopping(
     monitor="val_loss",
-    min_delta=0.0001,
-    patience=10,
-    verbose=False,
+    min_delta=0.1,
+    patience=1,
+    verbose=True,
     mode="min",
 )
-trainer = pl.Trainer(max_epochs=50, early_stop_callback=early_stop_callback)
+trainer = pl.Trainer(gpus=-1,
+                     max_epochs=50,
+                     distributed_backend='ddp',
+                     early_stop_callback=early_stop_callback)
 trainer.fit(model, DataLoader(train), DataLoader(val))
 
 # TODO: load more data
