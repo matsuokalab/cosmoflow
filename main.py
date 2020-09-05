@@ -19,7 +19,7 @@ def load_ds_from_dir(path):
     tensor_x = []
     tensor_y = []
 
-    for name_file in os.listdir(path)[:12]:
+    for name_file in os.listdir(path)[:16]:
         path_file = os.path.join(path, name_file)
         reader = tfrecord.reader.tfrecord_loader(data_path=path_file, index_path=None)
         data = next(reader)  # we expect only one record in a file
@@ -34,6 +34,7 @@ def load_ds_from_dir(path):
         # print("y", y)
 
     tensor_x = torch.stack(tensor_x)
+    print(f"size dataset = {np.prod(tensor_x.shape) * 4 / (1024**2)}M")
     tensor_y = torch.stack(tensor_y)
     dataset = TensorDataset(tensor_x, tensor_y)
     return dataset
