@@ -79,8 +79,8 @@ class Cosmoflow(pl.LightningModule):
 
 model = Cosmoflow()
 early_stop_callback = EarlyStopping(
-    min_delta=0.1,
-    patience=1,
+    min_delta=0.0001,
+    patience=5,
     verbose=True,
     mode="min",
 )
