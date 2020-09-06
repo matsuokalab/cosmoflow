@@ -7,7 +7,7 @@ from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 
 from model import build_model
-from data import load_ds_from_dir
+from data import load_ds_from_dir, CFDataModule
 
 
 early_stop_callback = EarlyStopping(
@@ -30,8 +30,10 @@ print("tainer created")
 # exit(1)
 
 path_data = "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small"
-train = load_ds_from_dir(os.path.join(path_data, "train"))
-val = load_ds_from_dir(os.path.join(path_data, "validation"))
+batch_size = 2
+data_module = CFDataModule(path_data, batch_size)
+# train = load_ds_from_dir(os.path.join(path_data, "train"))
+# val = load_ds_from_dir(os.path.join(path_data, "validation"))
 # write data iterator or reuse off-the shelf something
 # either pytorch dataloader or I want to try lightning actually
 
@@ -68,7 +70,7 @@ class Cosmoflow(pl.LightningModule):
 model = Cosmoflow()
 
 print("fit")
-trainer.fit(model, train, val)
+trainer.fit(model, data_module)
 
 # TODO: average between GPUs
 # TODO: load more data

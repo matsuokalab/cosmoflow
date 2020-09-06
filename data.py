@@ -3,6 +3,7 @@ import numpy as np
 import tfrecord
 import torch
 from torch.utils.data import TensorDataset, DataLoader
+import pytorch_lightning as pl
 
 
 def load_ds_from_dir(path):
@@ -29,3 +30,20 @@ def load_ds_from_dir(path):
     tensor_y = torch.stack(tensor_y)
     dataset = TensorDataset(tensor_x, tensor_y)
     return DataLoader(dataset)
+
+
+class CFDataModule(pl.LightningDataModule):
+    def __init__(self, path, batch_size):
+        super().__init__()
+        self.path = path
+        self.batch_size = batch_size
+
+    def setup(self, stage=None):
+        print("print doing setup")
+        # TODO: probably need to scatter indices here by hvd explicitly
+
+    def train_dataloader(self):
+        return load_ds_from_dir(os.path.join(self.path, "train"))
+
+    def val_dataloader(self):
+        return load_ds_from_dir(os.path.join(self.path, "validation"))
