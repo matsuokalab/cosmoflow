@@ -6,6 +6,7 @@ from pytorch_lightning.loggers import WandbLogger
 
 from model import build_model
 from data import CFDataModule
+import horovod.torch as hvd
 
 
 class Cosmoflow(pl.LightningModule):
@@ -19,7 +20,7 @@ class Cosmoflow(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         x, y = batch
-        print(f"#####training step seees {x.shape}")
+        print(f"\n#####training step seees {x.shape} on worker {hvd.rank()} of {hvd.size()}\n")
         y_hat = self(x)
         loss = F.mse_loss(y_hat, y)
         result = pl.TrainResult(loss)
