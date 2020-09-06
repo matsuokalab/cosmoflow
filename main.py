@@ -25,15 +25,9 @@ trainer = pl.Trainer(
 )
 print("tainer created")
 
-# exit(1)
-
 path_data = "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small"
 batch_size = 2
 data_module = CFDataModule(path_data, batch_size)
-# train = load_ds_from_dir(os.path.join(path_data, "train"))
-# val = load_ds_from_dir(os.path.join(path_data, "validation"))
-# write data iterator or reuse off-the shelf something
-# either pytorch dataloader or I want to try lightning actually
 
 
 class Cosmoflow(pl.LightningModule):
@@ -72,4 +66,3 @@ trainer.fit(model, data_module)
 
 # TODO: average between GPUs
 # TODO: load more data
-# TODO: stop trigger on val loss stop decrease
