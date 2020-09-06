@@ -65,5 +65,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-# TODO: average between GPUs
+
 # TODO: load more data
