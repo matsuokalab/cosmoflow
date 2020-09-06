@@ -8,28 +8,6 @@ from model import build_model
 from data import CFDataModule
 
 
-early_stop_callback = EarlyStopping(
-    min_delta=0.0001,
-    patience=5,
-    verbose=True,
-    mode="min",
-)
-wandb_logger = WandbLogger(project="cosmoflow")
-print("create tainer")
-trainer = pl.Trainer(
-    gpus=-1,
-    max_epochs=50,
-    distributed_backend="ddp",
-    early_stop_callback=early_stop_callback,
-    logger=wandb_logger,
-)
-print("tainer created")
-
-path_data = "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small"
-batch_size = 2
-data_module = CFDataModule(path_data, batch_size)
-
-
 class Cosmoflow(pl.LightningModule):
     def __init__(self):
         super().__init__()
@@ -59,10 +37,33 @@ class Cosmoflow(pl.LightningModule):
         return torch.optim.Adam(self.parameters(), lr=0.002)
 
 
-model = Cosmoflow()
+def main():
+    wandb_logger = WandbLogger(project="cosmoflow")
+    early_stop_callback = EarlyStopping(
+        min_delta=0.0001,
+        patience=5,
+        verbose=True,
+        mode="min",
+    )
+    print("create tainer")
+    trainer = pl.Trainer(
+        gpus=-1,
+        max_epochs=50,
+        distributed_backend="ddp",
+        early_stop_callback=early_stop_callback,
+        logger=wandb_logger,
+    )
+    print("tainer created")
 
-print("fit")
-trainer.fit(model, data_module)
+    path_data = "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small"
+    batch_size = 2
+    data_module = CFDataModule(path_data, batch_size)
+    model = Cosmoflow()
+    print("fit")
+    trainer.fit(model, data_module)
 
+
+if __name__ == "__main__":
+    main()
 # TODO: average between GPUs
 # TODO: load more data
