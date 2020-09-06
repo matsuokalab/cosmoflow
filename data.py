@@ -6,12 +6,12 @@ from torch.utils.data import TensorDataset, DataLoader
 import pytorch_lightning as pl
 
 
-def load_ds_from_dir(path):
+def load_ds_from_dir(path, batch_size=2):
     # TODO: this is a bit ugly, but I expect to find some torch-y out of the box method later
     tensor_x = []
     tensor_y = []
 
-    for name_file in os.listdir(path)[:16]:
+    for name_file in os.listdir(path)[:4]:
         path_file = os.path.join(path, name_file)
         reader = tfrecord.reader.tfrecord_loader(data_path=path_file, index_path=None)
         data = next(reader)  # we expect only one record in a file
@@ -29,7 +29,7 @@ def load_ds_from_dir(path):
     print(f"size dataset = {np.prod(tensor_x.shape) * 4 / (1024**2)}M")
     tensor_y = torch.stack(tensor_y)
     dataset = TensorDataset(tensor_x, tensor_y)
-    return DataLoader(dataset)
+    return DataLoader(dataset, batch_size=batch_size)
 
 
 class CFDataModule(pl.LightningDataModule):
@@ -43,7 +43,7 @@ class CFDataModule(pl.LightningDataModule):
         # TODO: probably need to scatter indices here by hvd explicitly
 
     def train_dataloader(self):
-        return load_ds_from_dir(os.path.join(self.path, "train"))
+        return load_ds_from_dir(os.path.join(self.path, "train"), self.batch_size)
 
     def val_dataloader(self):
-        return load_ds_from_dir(os.path.join(self.path, "validation"))
+        return load_ds_from_dir(os.path.join(self.path, "validation"), self.batch_size)

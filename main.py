@@ -19,6 +19,7 @@ class Cosmoflow(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         x, y = batch
+        print(f"#####training step seees {x.shape}")
         y_hat = self(x)
         loss = F.mse_loss(y_hat, y)
         result = pl.TrainResult(loss)
@@ -48,7 +49,7 @@ def main():
     print("create tainer")
     trainer = pl.Trainer(
         gpus=1,
-        max_epochs=50,
+        max_epochs=1,
         distributed_backend="horovod",
         early_stop_callback=early_stop_callback,
         logger=wandb_logger,
