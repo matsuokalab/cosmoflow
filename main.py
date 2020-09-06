@@ -1,5 +1,3 @@
-import os
-
 import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
@@ -7,7 +5,7 @@ from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 
 from model import build_model
-from data import load_ds_from_dir, CFDataModule
+from data import CFDataModule
 
 
 early_stop_callback = EarlyStopping(
@@ -75,4 +73,3 @@ trainer.fit(model, data_module)
 # TODO: average between GPUs
 # TODO: load more data
 # TODO: stop trigger on val loss stop decrease
-# TODO: explicitly set batch size
