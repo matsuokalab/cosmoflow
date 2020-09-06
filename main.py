@@ -47,9 +47,9 @@ def main():
     )
     print("create tainer")
     trainer = pl.Trainer(
-        gpus=-1,
+        gpus=1,
         max_epochs=50,
-        distributed_backend="ddp",
+        distributed_backend="horovod",
         early_stop_callback=early_stop_callback,
         logger=wandb_logger,
     )
