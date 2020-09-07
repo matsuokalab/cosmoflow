@@ -44,15 +44,13 @@ class CFDataModule(pl.LightningDataModule):
         self.batch_size = batch_size
 
     def setup(self, stage=None):
-        print("print doing setup")
+        print("doing setup")
         # TODO: probably need to scatter indices here by hvd explicitly
 
     def train_dataloader(self):
-        print(f"\n#####worker {hvd.rank()} of {hvd.size()} creating train_loader\n")
         return load_ds_from_dir(os.path.join(self.path, "train"), self.batch_size)
 
     def val_dataloader(self):
-        print(f"\n#####worker {hvd.rank()} of {hvd.size()} creating val\n")
         return load_ds_from_dir(os.path.join(self.path, "validation"), self.batch_size)
 
     def test_dataloader(self):

@@ -43,7 +43,7 @@ def main():
     path_data = "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small"
     batch_size = 2
     data_module = CFDataModule(path_data, batch_size)
-    # wandb_logger = WandbLogger(project="cosmoflow")
+    wandb_logger = WandbLogger(project="cosmoflow")
     early_stop_callback = EarlyStopping(
         min_delta=0.0001,
         patience=5,
@@ -53,11 +53,12 @@ def main():
     print("create tainer")
     trainer = pl.Trainer(
         gpus=1,
-        max_epochs=3,
+        num_sanity_val_steps=0,
+        max_epochs=20,
         distributed_backend="horovod",
         replace_sampler_ddp=False,
         early_stop_callback=early_stop_callback,
-        # logger=wandb_logger,
+        logger=wandb_logger,
     )
     print("tainer created")
 
