@@ -21,7 +21,6 @@ def load_ds_from_dir(path, batch_size=2):
         print(f"loading {len(files)} files")
     # lightning seems to work even if chunks are not equal size!
     for name_file in local_chunk[:max_files]:
-        # print(f"\n#####worker {hvd.rank()} of {hvd.size()} loading {name_file}\n")
         path_file = os.path.join(path, name_file)
         reader = tfrecord.reader.tfrecord_loader(data_path=path_file, index_path=None)
         data = next(reader)  # we expect only one record in a file
@@ -36,7 +35,7 @@ def load_ds_from_dir(path, batch_size=2):
         # print("y", y)
 
     tensor_x = torch.stack(tensor_x)
-    # print(f"\n#####worker {hvd.rank()} of {hvd.size()} loading {cnt_files} from {path}\n")
+    print(f"\n#####worker {hvd.rank()} of {hvd.size()} loaded {tensor_x.shape} from {path}\n")
     # print(f"size dataset = {np.prod(tensor_x.shape) * 4 / (1024**2)}M")
     tensor_y = torch.stack(tensor_y)
     dataset = TensorDataset(tensor_x, tensor_y)

@@ -6,7 +6,6 @@ from pytorch_lightning.loggers import WandbLogger
 
 from model import build_model
 from data import CFDataModule
-import horovod.torch as hvd
 
 
 class Cosmoflow(pl.LightningModule):
@@ -40,9 +39,10 @@ class Cosmoflow(pl.LightningModule):
 
 
 def main():
-    path_data = "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small"
-    batch_size = 2
-    data_module = CFDataModule(path_data, batch_size)
+    # TODO: move this to config
+    # path_data = "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small"
+    path_data = "/groups1/gac50489/datasets/cosmoflow_full/cosmoUniverse_2019_05_4parE_tf"
+    data_module = CFDataModule(path_data, batch_size=2)
     wandb_logger = WandbLogger(project="cosmoflow")
     early_stop_callback = EarlyStopping(
         min_delta=0.0001,
