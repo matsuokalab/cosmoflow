@@ -20,7 +20,7 @@ class Cosmoflow(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         x, y = batch
-        print(f"\n#####training step seees {x.shape} on worker {hvd.rank()} of {hvd.size()}\n")
+        # print(f"\n#####training step seees {x.shape} on worker {hvd.rank()} of {hvd.size()}\n")
         y_hat = self(x)
         loss = F.mse_loss(y_hat, y)
         result = pl.TrainResult(loss)
@@ -40,7 +40,10 @@ class Cosmoflow(pl.LightningModule):
 
 
 def main():
-    wandb_logger = WandbLogger(project="cosmoflow")
+    path_data = "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small"
+    batch_size = 2
+    data_module = CFDataModule(path_data, batch_size)
+    # wandb_logger = WandbLogger(project="cosmoflow")
     early_stop_callback = EarlyStopping(
         min_delta=0.0001,
         patience=5,
@@ -50,17 +53,14 @@ def main():
     print("create tainer")
     trainer = pl.Trainer(
         gpus=1,
-        max_epochs=1,
+        max_epochs=3,
         distributed_backend="horovod",
         replace_sampler_ddp=False,
         early_stop_callback=early_stop_callback,
-        logger=wandb_logger,
+        # logger=wandb_logger,
     )
     print("tainer created")
 
-    path_data = "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small"
-    batch_size = 2
-    data_module = CFDataModule(path_data, batch_size)
     model = Cosmoflow()
     print("fit")
     trainer.fit(model, data_module)
