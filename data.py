@@ -8,14 +8,20 @@ import horovod.torch as hvd
 
 
 def load_ds_from_dir(path, batch_size=2):
-    # TODO: this is a bit ugly, but I expect to find some torch-y out of the box method later
     tensor_x = []
     tensor_y = []
-    # if hvd.rank() == 0:
-    #     cnt_files = 4
-    # else:
-    cnt_files = 4
-    for name_file in os.listdir(path)[:cnt_files]:
+    max_files = 16
+    # TODO: only read file names on master nodes and then shuffle
+    # TODO: do lazy loading if does not fit into memory
+    # / check torch built-in tools for this
+    files = sorted(os.listdir(path))
+    chunks = np.array_split(files, hvd.size())
+    local_chunk = chunks[hvd.rank()]
+    if hvd.rank() == 0:
+        print(f"loading {len(files)} files")
+    # lightning seems to work even if chunks are not equal size!
+    for name_file in local_chunk[:max_files]:
+        # print(f"\n#####worker {hvd.rank()} of {hvd.size()} loading {name_file}\n")
         path_file = os.path.join(path, name_file)
         reader = tfrecord.reader.tfrecord_loader(data_path=path_file, index_path=None)
         data = next(reader)  # we expect only one record in a file
