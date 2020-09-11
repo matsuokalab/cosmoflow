@@ -60,7 +60,7 @@ def main():
         replace_sampler_ddp=False,
         early_stop_callback=early_stop_callback,
         logger=wandb_logger,
-        show_progress_bar=False,
+        progress_bar_refresh_rate=0,
     )
     # print("tainer created")
 
