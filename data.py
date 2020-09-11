@@ -10,7 +10,7 @@ import horovod.torch as hvd
 def load_ds_from_dir(path, batch_size=2):
     tensor_x = []
     tensor_y = []
-    max_files = 8
+    max_files = 16
     # TODO: only read file names on master nodes and then shuffle
     # TODO: do lazy loading if does not fit into memory
     # / check torch built-in tools for this
@@ -39,7 +39,7 @@ def load_ds_from_dir(path, batch_size=2):
     # print(f"size dataset = {np.prod(tensor_x.shape) * 4 / (1024**2)}M")
     tensor_y = torch.stack(tensor_y)
     dataset = TensorDataset(tensor_x, tensor_y)
-    return DataLoader(dataset, batch_size=batch_size)
+    return DataLoader(dataset, batch_size=batch_size, num_workers=2)
 
 
 class CFDataModule(pl.LightningDataModule):
@@ -57,6 +57,3 @@ class CFDataModule(pl.LightningDataModule):
 
     def val_dataloader(self):
         return load_ds_from_dir(os.path.join(self.path, "validation"), self.batch_size)
-
-    def test_dataloader(self):
-        return None

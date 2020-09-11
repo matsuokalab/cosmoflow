@@ -41,29 +41,30 @@ class Cosmoflow(pl.LightningModule):
 def main():
     # TODO: move this to config
     path_data = "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small"
-    # path_data = "/groups1/gac50489/datasets/cosmoflow_full/cosmoUniverse_2019_05_4parE_tf"
+    path_data = "/groups1/gac50489/datasets/cosmoflow_full/cosmoUniverse_2019_05_4parE_tf"
     data_module = CFDataModule(path_data, batch_size=2)
     # wandb_logger = WandbLogger(project="cosmoflow")
     early_stop_callback = EarlyStopping(
+        monitor='val_loss',
         min_delta=0.0001,
         patience=5,
         verbose=True,
         mode="min",
     )
-    print("create tainer")
+    # print("create tainer")
     trainer = pl.Trainer(
         gpus=1,
         num_sanity_val_steps=0,
-        max_epochs=20,
+        max_epochs=1,
         distributed_backend="horovod",
         replace_sampler_ddp=False,
         early_stop_callback=early_stop_callback,
         # logger=wandb_logger,
     )
-    print("tainer created")
+    # print("tainer created")
 
     model = Cosmoflow()
-    print("fit")
+    # print("fit")
     trainer.fit(model, data_module)
 
 

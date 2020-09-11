@@ -6,6 +6,11 @@
 #$ -j y
 #$ -o $JOB_NAME.o$JOB_ID
 
+# ======== Modules ========
+source /etc/profile.d/modules.sh
+source modules.sh
+
+# ======== Main ===========
 mpirun -np 4 \
     -H localhost:4 \
     -bind-to none -map-by slot \
