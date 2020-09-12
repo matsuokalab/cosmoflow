@@ -11,8 +11,9 @@ from data import CFDataModule
 class Cosmoflow(pl.LightningModule):
     def __init__(self):
         super().__init__()
-        self.net = build_model((128, 128, 128, 8), 4, 0)
-        self.example_input_array = torch.zeros((1, 8, 128, 128, 128))
+        self.net = build_model((128, 128, 128, 4), 4, 0)
+        self.net.train()
+        self.example_input_array = torch.zeros((1, 4, 128, 128, 128))
 
     def forward(self, x):
         return self.net(x)
@@ -55,7 +56,7 @@ def main():
     trainer = pl.Trainer(
         gpus=1,
         num_sanity_val_steps=0,
-        max_epochs=10,
+        max_epochs=20,
         distributed_backend="horovod",
         replace_sampler_ddp=False,
         # early_stop_callback=early_stop_callback,
