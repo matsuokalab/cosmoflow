@@ -27,7 +27,7 @@ def load_ds_from_dir(path, batch_size=2):
         x = np.frombuffer(data["x"][0], dtype='>u2')
         x = x.reshape(-1, 128, 128, 128)
         x = x.astype(np.float32) / 255 - 0.5
-        y = data["y"]
+        y = data["y"].astype(np.float32)
         x = torch.from_numpy(x)
         y = torch.from_numpy(y)
         tensor_x.append(x)

@@ -36,7 +36,8 @@ class Cosmoflow(pl.LightningModule):
         return result
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=0.002)
+        # return torch.optim.Adam(self.parameters(), lr=0.0002)
+        return torch.optim.SGD(self.net.parameters(), lr=0.001, momentum=0.9)
 
 
 def main():
