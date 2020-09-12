@@ -25,7 +25,8 @@ def load_ds_from_dir(path, batch_size=2):
         it = tf_record_iterator(path_file)
         data = next(it)
         x = np.frombuffer(data["x"][0], dtype='>u2')
-        x = x.reshape(-1, 128, 128, 128)
+        x = x.reshape(128, 128, 128, -1)
+        x = np.rollaxis(x, 3, 0)
         x = x.astype(np.float32) / 255 - 0.5
         y = data["y"].astype(np.float32)
         x = torch.from_numpy(x)
