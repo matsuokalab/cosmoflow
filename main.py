@@ -74,4 +74,6 @@ def main():
 if __name__ == "__main__":
     main()
 
-# TODO: load more data
+# TODO: load all data
+# TODO: implement LR scheduling
+# TODO: log against time
