@@ -76,4 +76,4 @@ if __name__ == "__main__":
 
 # TODO: load all data
 # TODO: implement LR scheduling
-# TODO: log against time
+# TODO: log hyper-parameters
