@@ -47,9 +47,8 @@ def main():
     config = {}  # TODO: load from yaml
     config["batch_size"] = 2
     data_module = CFDataModule(path_data, batch_size=config["batch_size"])
-    wandb_logger = WandbLogger(
-        project="cosmoflow",
-        config=config)
+    wandb_logger = WandbLogger(project="cosmoflow")
+    wandb_logger.log_hyperparams(config)
     # early_stop_callback = EarlyStopping(
     #     monitor='val_loss',
     #     min_delta=0.0001,
