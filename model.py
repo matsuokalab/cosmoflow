@@ -1,9 +1,6 @@
 import numpy as np
 import torch.nn as nn
 
-#from ..helpers_torch import Regression
-#from .params import proc_params
-
 
 class scale_1p2(nn.Module):
     def forward(self, input):
@@ -54,11 +51,3 @@ def build_model(input_shape, target_size, dropout=0):
     ]
 
     return nn.Sequential(*layers)
-
-
-# def get_kernel(params, unparsed_args):
-#     """Construct the CosmoFlow 3D CNN model"""
-
-#     proc_params(params, unparsed_args)
-#     net = build_model(params["input_shape"], params["target_size"], params["dropout"])
-#     return Regression(params, net)
