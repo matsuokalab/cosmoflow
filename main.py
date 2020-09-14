@@ -45,7 +45,7 @@ def main():
     path_data = "/groups1/gac50489/datasets/cosmoflow/cosmoUniverse_2019_05_4parE_tf_small"
     path_data = "/groups1/gac50489/datasets/cosmoflow_full/cosmoUniverse_2019_05_4parE_tf"
     data_module = CFDataModule(path_data, batch_size=2)
-    wandb_logger = WandbLogger(project="cosmoflow")
+    wandb_logger = WandbLogger(project="cosmoflow_fullw")
     # early_stop_callback = EarlyStopping(
     #     monitor='val_loss',
     #     min_delta=0.0001,

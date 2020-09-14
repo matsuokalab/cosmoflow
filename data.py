@@ -1,5 +1,6 @@
 import os
 import numpy as np
+from timeit import default_timer as timer
 from tfrecord_lite import tf_record_iterator
 import torch
 from torch.utils.data import TensorDataset, DataLoader
@@ -8,6 +9,7 @@ import horovod.torch as hvd
 
 
 def load_ds_from_dir(path, batch_size=2):
+    time_start = timer()
     tensor_x = []
     tensor_y = []
     max_files = 256
@@ -18,7 +20,7 @@ def load_ds_from_dir(path, batch_size=2):
     chunks = np.array_split(files, hvd.size())
     local_chunk = chunks[hvd.rank()]
     if hvd.rank() <= 4:
-        print(f"!!!!!! r {hvd.rank()} of {hvd.size()} loading {len(local_chunk)} of {len(files)} files")
+        print(f"!!!!!! r {hvd.rank()} of {hvd.size()} loading {len(local_chunk)}(cut to {max_files}) of {len(files)} files")
     # lightning seems to work even if chunks are not equal size!
     for name_file in local_chunk[:max_files]:
         path_file = os.path.join(path, name_file)
@@ -38,8 +40,12 @@ def load_ds_from_dir(path, batch_size=2):
         # print("y", y)
 
     tensor_x = torch.stack(tensor_x)
+    time_end = timer()
     if hvd.rank() <= 4:
-        print(f"\n#####worker {hvd.rank()} of {hvd.size()} loaded {tensor_x.shape} from {path}\n")
+        print(f"\n##### worker {hvd.rank()} of {hvd.size()}",
+              f"loaded {tensor_x.shape}",
+              f"{tensor_x.element_size() * tensor_x.nelement() / (1024 * 1024 * 1024)}G",
+              f"\nfrom {path} in {time_end - time_start}s\n")
     # print(f"size dataset = {np.prod(tensor_x.shape) * 4 / (1024**2)}M")
     tensor_y = torch.stack(tensor_y)
     dataset = TensorDataset(tensor_x, tensor_y)

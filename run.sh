@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -cwd
-#$ -l rt_F=64
-#$ -l h_rt=00:20:00
+#$ -l rt_F=32
+#$ -l h_rt=00:40:00
 #$ -N cosmoflow
 #$ -j y
 #$ -o $JOB_NAME.o$JOB_ID
