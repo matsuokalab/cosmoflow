@@ -1,6 +1,6 @@
 #!/bin/bash
 #$ -cwd
-#$ -l rt_F=32
+#$ -l rt_F=8
 #$ -l h_rt=00:40:00
 #$ -N cosmoflow
 #$ -j y
